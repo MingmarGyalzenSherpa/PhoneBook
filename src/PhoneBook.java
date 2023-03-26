@@ -1,9 +1,15 @@
 import javax.swing.*;
+import java.awt.*;
+import java.awt.event.ActionEvent;
+import java.awt.event.ActionListener;
+import java.util.Objects;
 
-public class PhoneBook {
+public class PhoneBook implements ActionListener {
 
+    final int columnLength = 3;
+    final int labelWidth = 50, labelHeight = 50, fieldWidth = 200, fieldHeight = 30,btnWidth = 90, btnHeight = 40;
     private String[] columnNames = {"Name","City","Phone"};
-    String[][] data = new String[0][];
+    String[][] data = new String[0][columnLength];
 
 
     private JFrame frame = new JFrame();
@@ -33,27 +39,28 @@ public class PhoneBook {
         frame.setLayout(null);
         frame.setLocationRelativeTo(null);
         frame.setResizable(false);
-        frame.setVisible(true);
         renderInputField();
         renderTable();
+        frame.setVisible(true);
+
     }
 
     private void renderInputField(){
 
-        nameLabel.setBounds(60,40,50,50);
-        nameField.setBounds(110,50,200,30);
+        nameLabel.setBounds(60,40,labelWidth,labelHeight);
+        nameField.setBounds(110,50,fieldWidth,fieldHeight);
 
 
-        cityLabel.setBounds(60,70,50,50);
-        cityField.setBounds(110,80,200,30 );
+        cityLabel.setBounds(60,70,labelWidth,labelHeight);
+        cityField.setBounds(110,80,fieldWidth,fieldHeight );
 
-        phoneLabel.setBounds(60,100,50,50);
-        phoneField.setBounds(110,110,200,30);
+        phoneLabel.setBounds(60,100,labelWidth,labelHeight);
+        phoneField.setBounds(110,110,fieldWidth,fieldHeight);
 
         insertBtn.setFocusable(false);
         resetBtn.setFocusable(false);
-        insertBtn.setBounds(110,150,90,40);
-        resetBtn.setBounds(220,150,90,40);
+        insertBtn.setBounds(110,150,btnWidth,btnHeight);
+        resetBtn.setBounds(220,150,btnWidth,btnHeight);
 
         frame.add(nameLabel);
         frame.add(cityLabel);
@@ -66,13 +73,66 @@ public class PhoneBook {
         frame.add(insertBtn);
         frame.add(resetBtn);
 
+        insertBtn.addActionListener(this);
+        resetBtn.addActionListener(this);
+
 
     }
 
     private void renderTable(){
         record = new JTable(data,columnNames);
-        JScrollPane tableScroll = new JScrollPane(record);
+        record.setRowHeight(30);
+        JScrollPane tableScroll = new JScrollPane(record,ScrollPaneConstants.VERTICAL_SCROLLBAR_ALWAYS,ScrollPaneConstants.HORIZONTAL_SCROLLBAR_ALWAYS);
         tableScroll.setBounds(10,200,365,260);
         frame.add(tableScroll);
+    }
+
+    public void actionPerformed(ActionEvent e){
+
+
+        if(e.getSource() == insertBtn)
+        {
+            if(Objects.equals(nameField.getText(), "") || Objects.equals(cityField.getText(), "") || Objects.equals(phoneField.getText(), "")){
+                return;
+            }
+
+            String[] entry = {nameField.getText(),cityField.getText(),phoneField.getText()};
+
+            nameField.setText("");
+            cityField.setText("");
+            phoneField.setText("");
+
+            if(data.length == 0) // if table is empty
+            {
+                data = new String[1][columnLength]; //new array of lenght 1 to store record
+                for(int i = 0; i < 3; i++) {
+                    data[0][i] = entry[i];
+                }
+            }else{ //if table isnt empty
+                int newLength = data.length + 1; //increase size to record the new data;
+                String[][] tempData = data;
+                data = new String[newLength][columnLength];
+                for(int i = 0 ; i < newLength ; i++)
+                {
+                    for(int j = 0 ; j < columnLength;j++ )
+                    {
+                        if(i > newLength - 2)
+                        {
+                            data[i][j] = entry[j];
+                        }else{
+                            data[i][j] = tempData[i][j];
+                        }
+                    }
+                }
+
+            }
+
+            renderTable();
+        }
+        if(e.getSource() == resetBtn)
+        {
+            data = new String[0][];
+            renderTable();
+        }
     }
 }
