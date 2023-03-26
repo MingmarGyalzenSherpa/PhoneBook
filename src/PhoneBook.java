@@ -2,6 +2,10 @@ import javax.swing.*;
 
 public class PhoneBook {
 
+    private String[] columnNames = {"Name","City","Phone"};
+    String[][] data = new String[0][];
+
+
     private JFrame frame = new JFrame();
 
     //label
@@ -18,13 +22,20 @@ public class PhoneBook {
     //buttons
     private JButton insertBtn = new JButton("INSERT");
     private JButton resetBtn = new JButton("RESET");
+
+    //table
+    private JTable record;
+
     public void renderFrame(){
 
+        frame.setTitle("Phone Book");
         frame.setSize(400,500);
         frame.setLayout(null);
         frame.setLocationRelativeTo(null);
+        frame.setResizable(false);
         frame.setVisible(true);
         renderInputField();
+        renderTable();
     }
 
     private void renderInputField(){
@@ -39,6 +50,8 @@ public class PhoneBook {
         phoneLabel.setBounds(60,100,50,50);
         phoneField.setBounds(110,110,200,30);
 
+        insertBtn.setFocusable(false);
+        resetBtn.setFocusable(false);
         insertBtn.setBounds(110,150,90,40);
         resetBtn.setBounds(220,150,90,40);
 
@@ -57,6 +70,9 @@ public class PhoneBook {
     }
 
     private void renderTable(){
-
+        record = new JTable(data,columnNames);
+        JScrollPane tableScroll = new JScrollPane(record);
+        tableScroll.setBounds(10,200,365,260);
+        frame.add(tableScroll);
     }
 }
